@@ -1,0 +1,223 @@
+
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenMartik AI Studio</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: #090b12;
+  color: #f5f5f7;
+  font-family: Arial, sans-serif;
+}
+header {
+  padding: 22px 7%;
+  border-bottom: 1px solid #242635;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.logo { font-size: 23px; font-weight: bold; }
+.logo span { color: #9b7cff; }
+.status { color: #65e6a1; font-size: 13px; }
+main {
+  max-width: 900px;
+  margin: 45px auto;
+  padding: 20px;
+}
+h1 { font-size: 36px; margin-bottom: 8px; }
+.subtitle { color: #a5a8b8; margin-bottom: 30px; }
+.panel {
+  background: #141724;
+  border: 1px solid #292d40;
+  border-radius: 16px;
+  padding: 25px;
+}
+label {
+  display: block;
+  margin: 18px 0 8px;
+  font-weight: bold;
+}
+textarea, select, input {
+  width: 100%;
+  padding: 13px;
+  background: #0c0f19;
+  border: 1px solid #35394e;
+  border-radius: 9px;
+  color: white;
+  font-size: 15px;
+}
+textarea { min-height: 120px; resize: vertical; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+button {
+  margin-top: 24px;
+  width: 100%;
+  padding: 16px;
+  border: 0;
+  border-radius: 10px;
+  background: #8964f5;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+button:disabled { opacity: .5; cursor: wait; }
+#status { margin-top: 18px; color: #c2b4ff; }
+video {
+  width: 100%;
+  margin-top: 20px;
+  border-radius: 12px;
+  background: black;
+}
+#result { display: none; margin-top: 25px; }
+.download {
+  display: inline-block;
+  margin-top: 12px;
+  color: #b9a5ff;
+}
+@media(max-width:600px) {
+  .grid { grid-template-columns: 1fr; }
+  h1 { font-size: 28px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">OpenMartik <span>AI</span></div>
+  <div class="status">● Studio Ready</div>
+</header>
+
+<main>
+  <h1>Create your next video.</h1>
+  <p class="subtitle">Powered by LTX-2.5 · Video with Audio</p>
+
+  <section class="panel">
+    <form id="generator">
+
+      <label for="mode">Generation Mode</label>
+      <select id="mode" name="mode">
+        <option value="text">Text to Video</option>
+        <option value="image">Image to Video</option>
+      </select>
+
+      <label for="prompt">Describe your video</label>
+      <textarea id="prompt" name="prompt"
+        placeholder="A cinematic futuristic city at sunset..."
+        required></textarea>
+
+      <div id="imageBox" hidden>
+        <label for="image">Upload your image</label>
+        <input id="image" type="file"
+          accept="image/png,image/jpeg,image/webp">
+      </div>
+
+      <div class="grid">
+        <div>
+          <label for="duration">Duration (seconds)</label>
+          <input id="duration" type="number"
+            min="2" max="20" value="2">
+        </div>
+        <div>
+          <label for="height">Height</label>
+          <input id="height" type="number"
+            min="512" max="1536" step="16" value="832">
+        </div>
+        <div>
+          <label for="width">Width</label>
+          <input id="width" type="number"
+            min="512" max="1536" step="16" value="832">
+        </div>
+      </div>
+
+      <button id="generate" type="submit">
+        ✨ Generate Video
+      </button>
+    </form>
+
+    <div id="status" role="status"></div>
+
+    <div id="result">
+      <h2>Your video</h2>
+      <video id="video" controls playsinline></video>
+      <a id="download" class="download" download="openmartik-video.mp4">
+        Download MP4
+      </a>
+    </div>
+  </section>
+</main>
+
+<script>
+const form = document.getElementById("generator");
+const mode = document.getElementById("mode");
+const imageBox = document.getElementById("imageBox");
+const imageInput = document.getElementById("image");
+const button = document.getElementById("generate");
+const statusBox = document.getElementById("status");
+const result = document.getElementById("result");
+const video = document.getElementById("video");
+const download = document.getElementById("download");
+
+mode.addEventListener("change", () => {
+  const imageMode = mode.value === "image";
+  imageBox.hidden = !imageMode;
+  imageInput.required = imageMode;
+});
+
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  button.disabled = true;
+  button.textContent = "⏳ Generating...";
+  statusBox.textContent = "Connecting to LTX-2.5...";
+  result.style.display = "none";
+
+  const data = new FormData();
+  data.append("prompt", document.getElementById("prompt").value);
+  data.append("mode", mode.value);
+  data.append("duration", document.getElementById("duration").value);
+  data.append("height", document.getElementById("height").value);
+  data.append("width", document.getElementById("width").value);
+
+  if (mode.value === "image" && imageInput.files.length) {
+    data.append("image", imageInput.files[0]);
+  }
+
+  try {
+    statusBox.textContent =
+      "Generating your video. Please wait...";
+
+    const response = await fetch("/generate", {
+      method: "POST",
+      body: data
+    });
+
+    const output = await response.json();
+
+    if (!response.ok) {
+      throw new Error(output.detail || "Generation failed");
+    }
+
+    const videoUrl = output.video;
+
+    video.src = videoUrl;
+    download.href = videoUrl;
+    result.style.display = "block";
+    statusBox.textContent = "✓ Video generated successfully!";
+  } catch (error) {
+    statusBox.textContent = "Error: " + error.message;
+  } finally {
+    button.disabled = false;
+    button.textContent = "✨ Generate Video";
+  }
+});
+</script>
+</body>
+</html>
