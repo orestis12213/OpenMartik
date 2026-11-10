@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenMartik AI — Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #09070c;
+  --panel: rgba(23, 18, 28, 0.75);
+  --panel-border: rgba(255, 255, 255, 0.08);
+  --orange: #ff784f;
+  --orange-glow: rgba(255, 120, 79, 0.35);
+  --mint: #00f098;
+  --text: #f8f6fb;
+  --muted: #9e95a5;
+  --input-bg: rgba(14, 11, 18, 0.8);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: 
+    radial-gradient(circle at 50% -10%, rgba(255, 120, 79, 0.15), transparent 60%),
+    radial-gradient(circle at 90% 80%, rgba(0, 240, 152, 0.06), transparent 50%),
+    var(--bg);
+  color: var(--text);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  overflow-x: hidden;
+}
+
+button, input, textarea, select { font: inherit; }
+
+.topbar {
+  height: 76px;
+  padding: 0 6%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--panel-border);
+  background: rgba(9, 7, 12, 0.6);
+  backdrop-filter: blur(20px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.logo {
+  font-family: 'Outfit', sans-serif;
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #ffffff 30%, #a99eaa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 15px rgba(255,255,255,0.15));
+}
+
+.logo span {
+  background: linear-gradient(135deg, var(--orange), #ffb288);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.status-pill {
+  color: var(--mint);
+  background: rgba(0, 240, 152, 0.06);
+  border: 1px solid rgba(0, 240, 152, 0.2);
+  border-radius: 30px;
+  padding: 7px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 0 15px rgba(0, 240, 152, 0.1);
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  background: var(--mint);
+  border-radius: 50%;
+  margin-right: 8px;
+  box-shadow: 0 0 8px var(--mint);
+}
+
+main {
+  max-width: 1200px;
+  padding: 60px 24px 90px;
+  margin: auto;
+}
+
+.hero { 
+  text-align: center; 
+  margin-bottom: 50px; 
+}
+
+.eyebrow {
+  display: inline-block;
+  background: rgba(255, 120, 79, 0.1);
+  border: 1px solid rgba(255, 120, 79, 0.25);
+  color: var(--orange);
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 16px;
+  border-radius: 20px;
+  margin-bottom: 18px;
+}
+
+h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(40px, 6vw, 68px);
+  line-height: 1.05;
+  letter-spacing: -2.5px;
+  margin: 0 0 18px;
+  font-weight: 700;
+}
+
+h1 span {
+  background: linear-gradient(135deg, #ff784f 20%, #ffbe98 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.6;
+  max-width: 500px;
+  margin: auto;
+}
+
+.studio {
+  display: grid;
+  grid-template-columns: 1.05fr .95fr;
+  gap: 28px;
+  align-items: start;
+}
+
+.panel {
+  background: var(--panel);
+  backdrop-filter: blur(25px);
+  border: 1px solid var(--panel-border);
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+}
+
+.panel-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.panel-desc {
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 28px;
+}
+
+.field { margin-bottom: 22px; }
+
+label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  color: #d3cbd8;
+}
+
+input, textarea, select {
+  width: 100%;
+  background: var(--input-bg);
+  color: var(--text);
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  outline: none;
+  transition: all 0.25s ease;
+  font-size: 14px;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 4px rgba(255, 120, 79, 0.15);
+}
+
+textarea {
+  min-height: 120px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.mode-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.mode-option {
+  background: var(--input-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 16px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-align: center;
+}
+
+.mode-option.active {
+  border-color: var(--orange);
+  background: rgba(255, 120, 79, 0.08);
+  box-shadow: 0 0 20px rgba(255, 120, 79, 0.1);
+}
+
+.mode-option strong {
+  display: block;
+  font-size: 14px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.mode-option small {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.mode-option .emoji {
+  font-size: 22px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+/* Visual Style Image Grid Selection */
+.style-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.style-card {
+  background: var(--input-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+  padding: 12px 8px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.25s ease;
+}
+
+.style-card img {
+  width: 100%;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.style-card span {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.style-card.active {
+  border-color: var(--orange);
+  background: rgba(255, 120, 79, 0.1);
+}
+
+.style-card.active span {
+  color: var(--text);
+}
+
+.upload-box {
+  border: 1px dashed rgba(255, 120, 79, 0.4);
+  background: rgba(255, 120, 79, 0.03);
+  border-radius: 14px;
+  padding: 16px;
+  transition: 0.2s;
+}
+
+.upload-box:hover {
+  border-color: var(--orange);
+  background: rgba(255, 120, 79, 0.06);
+}
+
+.upload-box input {
+  border: 0;
+  background: transparent;
+  padding: 0;
+}
+
+/* Seconds selection buttons */
+.seconds-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.sec-option {
+  background: var(--input-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+  cursor: pointer;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  transition: 0.25s;
+}
+
+.sec-option.active {
+  background: rgba(255, 120, 79, 0.12);
+  border-color: var(--orange);
+  color: var(--orange);
+  box-shadow: 0 0 15px rgba(255, 120, 79, 0.15);
+}
+
+.generate-btn {
+  width: 100%;
+  border: 0;
+  border-radius: 14px;
+  padding: 18px;
+  color: #0d080a;
+  background: linear-gradient(135deg, var(--orange), #ffa673);
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 10px 30px var(--orange-glow);
+  margin-top: 10px;
+}
+
+.generate-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 40px rgba(255, 120, 79, 0.45);
+}
+
+.preview {
+  min-height: 420px;
+  background: 
+    radial-gradient(circle at 50% 50%, rgba(255, 120, 79, 0.08), transparent 60%),
+    rgba(14, 11, 18, 0.8);
+  border: 1px solid var(--panel-border);
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.preview-icon {
+  font-size: 42px;
+  margin-bottom: 16px;
+  opacity: 0.8;
+  filter: drop-shadow(0 0 10px rgba(255,120,79,0.3));
+}
+
+.preview h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+
+.preview p {
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+  line-height: 1.6;
+  max-width: 260px;
+}
+
+.footer {
+  text-align: center;
+  color: #5c5361;
+  font-size: 12px;
+  letter-spacing: 1px;
+  margin-top: 45px;
+}
+
+
+.hidden { display: none !important; }
+.sub-field { margin-top: 12px; }
+.hint { color: var(--muted); font-size: 12px; margin-top: 8px; line-height: 1.5; }
+.custom-row { display: flex; align-items: center; gap: 10px; }
+.custom-row input { max-width: 140px; }
+.custom-row span { color: var(--muted); font-size: 13px; }
+.error-box {
+  background: rgba(255, 80, 80, 0.08);
+  border: 1px solid rgba(255, 80, 80, 0.35);
+  color: #ffb3b3;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 13px;
+  margin-top: 14px;
+  line-height: 1.5;
+}
+.generate-btn:disabled { opacity: .55; cursor: not-allowed; transform: none; box-shadow: none; }
+.preview canvas, .preview video {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  background: #000;
+  display: block;
+}
+.progress-wrap { width: 100%; margin-top: 18px; }
+.progress-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+.progress-bar { height: 6px; background: rgba(255,255,255,0.06); border-radius: 6px; overflow: hidden; }
+.progress-fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--orange), #ffbe98); transition: width .4s ease; }
+.result-meta { width: 100%; margin-top: 16px; }
+.result-meta h3 { margin: 0 0 6px; }
+.result-meta p { max-width: none; text-align: left; margin: 0 0 14px; }
+.result-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn-secondary {
+  flex: 1;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  border: 1px solid var(--panel-border);
+  background: var(--input-bg);
+  color: var(--text);
+}
+.btn-secondary.primary { background: rgba(255,120,79,0.12); border-color: var(--orange); color: var(--orange); }
+.thumbs { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; width: 100%; margin-top: 14px; }
+.thumbs img { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06); }
+.spinner { width: 34px; height: 34px; border-radius: 50%; border: 3px solid rgba(255,120,79,0.2); border-top-color: var(--orange); animation: spin 1s linear infinite; margin-bottom: 16px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media(max-width: 800px) {
+  .studio { grid-template-columns: 1fr; }
+  main { padding-top: 35px; }
+  .topbar { padding: 0 20px; }
+}
+
+@media(max-width: 480px) {
+  .panel { padding: 22px; }
+  .style-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="logo">Open<span>Martik</span></div>
+  <div class="status-pill"><span class="status-dot"></span>STUDIO PRO ONLINE</div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="eyebrow">Next-Gen Video Generation</div>
+    <h1>Create something<br><span>unforgettable.</span></h1>
+    <p class="subtitle">
+      Turn your vision and creative prompts into cinema-grade videos powered by advanced AI.
+    </p>
+  </section>
+
+  <section class="studio">
+
+    <div class="panel">
+      <div class="panel-title">Video Parameters</div>
+      <div class="panel-desc">Configure your AI video generation below.</div>
+
+      <form id="videoForm">
+
+        <div class="field">
+          <label>GENERATION MODE</label>
+          <div class="mode-grid">
+            <button type="button" class="mode-option active" id="textMode">
+              <span class="emoji">✍️</span>
+              <strong>Text to Video</strong>
+              <small>Turn prompts into motion</small>
+            </button>
+            <button type="button" class="mode-option" id="imageMode">
+              <span class="emoji">🖼️</span>
+              <strong>Image to Video</strong>
+              <small>Animate your image</small>
+            </button>
+          </div>
+          <input type="hidden" id="mode" value="text">
+        </div>
+
+        <div class="field">
+          <label for="prompt">YOUR PROMPT</label>
+          <textarea id="prompt" maxlength="2000" placeholder="Describe the scene you want to generate... e.g. A futuristic city at sunset, flying cars and glowing lights."></textarea>
+        </div>
+
+        <!-- Visual Style με εικόνες (Cartoun + 3 επιλογές + 1 your idea) -->
+        <div class="field">
+          <label>VISUAL STYLE</label>
+          <div class="style-grid">
+            <div class="style-card active" data-style="cartoon">
+              <img src="https://images.unsplash.com/photo-1578632767115-351597cf2477?w=150&auto=format&fit=crop&q=80" alt="Cartoon">
+              <span>Cartoon</span>
+            </div>
+            <div class="style-card" data-style="photorealistic">
+              <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150&auto=format&fit=crop&q=80" alt="Photorealistic">
+              <span>Photorealistic</span>
+            </div>
+            <div class="style-card" data-style="cyberpunk">
+              <img src="https://images.unsplash.com/photo-1515260268569-9271009adfdb?w=150&auto=format&fit=crop&q=80" alt="Cyberpunk">
+              <span>Cyberpunk</span>
+            </div>
+            <div class="style-card" data-style="cinematic">
+              <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=150&auto=format&fit=crop&q=80" alt="Cinematic">
+              <span>Cinematic</span>
+            </div>
+            <div class="style-card" data-style="your-idea">
+              <img src="https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?w=150&auto=format&fit=crop&q=80" alt="Your Idea">
+              <span>Your Idea</span>
+            </div>
+          </div>
+          <input type="hidden" id="selectedStyle" value="cartoon">
+          <div class="sub-field hidden" id="customStyleField">
+            <label for="customStyle">DESCRIBE YOUR STYLE</label>
+            <textarea id="customStyle" maxlength="600" style="min-height:80px" placeholder="e.g. Watercolor painting with soft pastel colors and visible paper texture, dreamy and calm."></textarea>
+          </div>
+        </div>
+
+        <div class="field" id="imageField" style="display:none">
+          <label for="image">UPLOAD SOURCE IMAGE</label>
+          <div class="hint" style="margin:-4px 0 10px">Your image opens the video and the following shots continue from it.</div>
+          <div class="upload-box">
+            <input type="file" id="image" accept="image/*">
+          </div>
+        </div>
+
+        <!-- Duration Seconds Selection (5, 10, 15, Custom) -->
+        <div class="field">
+          <label>DURATION (SECONDS)</label>
+          <div class="seconds-grid">
+            <button type="button" class="sec-option active" data-sec="5">5s</button>
+            <button type="button" class="sec-option" data-sec="10">10s</button>
+            <button type="button" class="sec-option" data-sec="15">15s</button>
+            <button type="button" class="sec-option" data-sec="custom">Custom</button>
+          </div>
+          <input type="hidden" id="duration" value="5">
+          <div class="sub-field hidden" id="customDurationField">
+            <div class="custom-row">
+              <input type="number" id="customDuration" min="1" max="60" step="1" value="20" inputmode="numeric">
+              <span>seconds (1–60)</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="generate-btn" id="generateBtn" type="submit">
+          ✦ Generate Video
+        </button>
+        <div class="error-box hidden" id="errorBox" role="alert"></div>
+      </form>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Studio Canvas</div>
+      <div class="panel-desc">Your generated output will appear here.</div>
+
+      <div class="preview" id="preview" aria-live="polite">
+        <div class="preview-icon">✦</div>
+        <h3>Ready to create</h3>
+        <p>Enter your prompt and configuration settings to generate your next video.</p>
+      </div>
+    </div>
+
+  </section>
+
+  <div class="footer">
+    OPENMARTIK AI STUDIO · PREVIEW EDITION
+  </div>
+</main>
+
+<script src="/app.js" defer></script>
+
+</body>
+</html>
