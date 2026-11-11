@@ -1,575 +1,231 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="el">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OpenMartik AI — Studio</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
-
+<title>AI Character Studio</title>
 <style>
-:root {
-  --bg: #09070c;
-  --panel: rgba(23, 18, 28, 0.75);
-  --panel-border: rgba(255, 255, 255, 0.08);
-  --orange: #ff784f;
-  --orange-glow: rgba(255, 120, 79, 0.35);
-  --mint: #00f098;
-  --text: #f8f6fb;
-  --muted: #9e95a5;
-  --input-bg: rgba(14, 11, 18, 0.8);
-}
-
 * { box-sizing: border-box; }
-
 body {
   margin: 0;
-  min-height: 100vh;
-  background: 
-    radial-gradient(circle at 50% -10%, rgba(255, 120, 79, 0.15), transparent 60%),
-    radial-gradient(circle at 90% 80%, rgba(0, 240, 152, 0.06), transparent 50%),
-    var(--bg);
-  color: var(--text);
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  overflow-x: hidden;
+  background: #101020;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 22px;
 }
-
-button, input, textarea, select { font: inherit; }
-
-.topbar {
-  height: 76px;
-  padding: 0 6%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--panel-border);
-  background: rgba(9, 7, 12, 0.6);
-  backdrop-filter: blur(20px);
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.logo {
-  font-family: 'Outfit', sans-serif;
-  font-size: 26px;
-  font-weight: 900;
-  letter-spacing: -1px;
-  text-transform: uppercase;
-  background: linear-gradient(135deg, #ffffff 30%, #a99eaa 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 15px rgba(255,255,255,0.15));
-}
-
-.logo span {
-  background: linear-gradient(135deg, var(--orange), #ffb288);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.status-pill {
-  color: var(--mint);
-  background: rgba(0, 240, 152, 0.06);
-  border: 1px solid rgba(0, 240, 152, 0.2);
-  border-radius: 30px;
-  padding: 7px 16px;
-  font-size: 12px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  box-shadow: 0 0 15px rgba(0, 240, 152, 0.1);
-}
-
-.status-dot {
-  width: 7px;
-  height: 7px;
-  background: var(--mint);
-  border-radius: 50%;
-  margin-right: 8px;
-  box-shadow: 0 0 8px var(--mint);
-}
-
-main {
-  max-width: 1200px;
-  padding: 60px 24px 90px;
+h1 { color: #a78bfa; }
+p { color: #c4c4d4; }
+.container {
+  max-width: 650px;
   margin: auto;
 }
-
-.hero { 
-  text-align: center; 
-  margin-bottom: 50px; 
-}
-
-.eyebrow {
-  display: inline-block;
-  background: rgba(255, 120, 79, 0.1);
-  border: 1px solid rgba(255, 120, 79, 0.25);
-  color: var(--orange);
-  text-transform: uppercase;
-  letter-spacing: 2.5px;
-  font-size: 11px;
-  font-weight: 700;
-  padding: 6px 16px;
+video { display: none; }
+canvas {
+  width: 100%;
+  background: #25253b;
   border-radius: 20px;
-  margin-bottom: 18px;
+  margin-top: 15px;
 }
-
-h1 {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(40px, 6vw, 68px);
-  line-height: 1.05;
-  letter-spacing: -2.5px;
-  margin: 0 0 18px;
-  font-weight: 700;
-}
-
-h1 span {
-  background: linear-gradient(135deg, #ff784f 20%, #ffbe98 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.subtitle {
-  color: var(--muted);
-  font-size: 16px;
-  line-height: 1.6;
-  max-width: 500px;
-  margin: auto;
-}
-
-.studio {
-  display: grid;
-  grid-template-columns: 1.05fr .95fr;
-  gap: 28px;
-  align-items: start;
-}
-
-.panel {
-  background: var(--panel);
-  backdrop-filter: blur(25px);
-  border: 1px solid var(--panel-border);
-  border-radius: 24px;
-  padding: 32px;
-  box-shadow: 0 30px 80px rgba(0,0,0,0.4);
-}
-
-.panel-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 20px;
-  font-weight: 700;
-  margin-bottom: 6px;
-}
-
-.panel-desc {
-  color: var(--muted);
-  font-size: 13px;
-  margin-bottom: 28px;
-}
-
-.field { margin-bottom: 22px; }
-
-label {
-  display: block;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-  color: #d3cbd8;
-}
-
-input, textarea, select {
-  width: 100%;
-  background: var(--input-bg);
-  color: var(--text);
-  border: 1px solid var(--panel-border);
-  border-radius: 14px;
-  padding: 14px 16px;
-  outline: none;
-  transition: all 0.25s ease;
-  font-size: 14px;
-}
-
-input:focus, textarea:focus, select:focus {
-  border-color: var(--orange);
-  box-shadow: 0 0 0 4px rgba(255, 120, 79, 0.15);
-}
-
-textarea {
-  min-height: 120px;
-  resize: vertical;
-  line-height: 1.6;
-}
-
-.mode-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.mode-option {
-  background: var(--input-bg);
-  border: 1px solid var(--panel-border);
-  border-radius: 16px;
-  padding: 16px;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  text-align: center;
-}
-
-.mode-option.active {
-  border-color: var(--orange);
-  background: rgba(255, 120, 79, 0.08);
-  box-shadow: 0 0 20px rgba(255, 120, 79, 0.1);
-}
-
-.mode-option strong {
-  display: block;
-  font-size: 14px;
-  color: var(--text);
-  margin-bottom: 4px;
-}
-
-.mode-option small {
-  color: var(--muted);
-  font-size: 11px;
-}
-
-.mode-option .emoji {
-  font-size: 22px;
-  display: block;
-  margin-bottom: 10px;
-}
-
-/* Visual Style Image Grid Selection */
-.style-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-}
-
-.style-card {
-  background: var(--input-bg);
-  border: 1px solid var(--panel-border);
-  border-radius: 14px;
-  padding: 12px 8px;
-  cursor: pointer;
-  text-align: center;
-  transition: all 0.25s ease;
-}
-
-.style-card img {
-  width: 100%;
-  height: 60px;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 8px;
-  border: 1px solid rgba(255,255,255,0.06);
-}
-
-.style-card span {
-  display: block;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--muted);
-}
-
-.style-card.active {
-  border-color: var(--orange);
-  background: rgba(255, 120, 79, 0.1);
-}
-
-.style-card.active span {
-  color: var(--text);
-}
-
-.upload-box {
-  border: 1px dashed rgba(255, 120, 79, 0.4);
-  background: rgba(255, 120, 79, 0.03);
-  border-radius: 14px;
-  padding: 16px;
-  transition: 0.2s;
-}
-
-.upload-box:hover {
-  border-color: var(--orange);
-  background: rgba(255, 120, 79, 0.06);
-}
-
-.upload-box input {
-  border: 0;
-  background: transparent;
-  padding: 0;
-}
-
-/* Seconds selection buttons */
-.seconds-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-}
-
-.sec-option {
-  background: var(--input-bg);
-  border: 1px solid var(--panel-border);
+select, button {
+  padding: 13px;
   border-radius: 12px;
-  padding: 12px;
-  text-align: center;
+  border: none;
+  margin: 7px;
+  font-size: 16px;
+}
+select { background: #292943; color: white; }
+button {
+  background: #8b5cf6;
+  color: white;
   cursor: pointer;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text);
-  transition: 0.25s;
+  font-weight: bold;
 }
-
-.sec-option.active {
-  background: rgba(255, 120, 79, 0.12);
-  border-color: var(--orange);
-  color: var(--orange);
-  box-shadow: 0 0 15px rgba(255, 120, 79, 0.15);
-}
-
-.generate-btn {
-  width: 100%;
-  border: 0;
-  border-radius: 14px;
-  padding: 18px;
-  color: #0d080a;
-  background: linear-gradient(135deg, var(--orange), #ffa673);
-  font-weight: 700;
-  font-size: 15px;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  box-shadow: 0 10px 30px var(--orange-glow);
-  margin-top: 10px;
-}
-
-.generate-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 40px rgba(255, 120, 79, 0.45);
-}
-
-.preview {
-  min-height: 420px;
-  background: 
-    radial-gradient(circle at 50% 50%, rgba(255, 120, 79, 0.08), transparent 60%),
-    rgba(14, 11, 18, 0.8);
-  border: 1px solid var(--panel-border);
-  border-radius: 18px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-}
-
-.preview-icon {
-  font-size: 42px;
-  margin-bottom: 16px;
-  opacity: 0.8;
-  filter: drop-shadow(0 0 10px rgba(255,120,79,0.3));
-}
-
-.preview h3 {
-  font-family: 'Space Grotesk', sans-serif;
-  margin: 0 0 8px;
-  font-size: 18px;
-}
-
-.preview p {
-  color: var(--muted);
-  font-size: 13px;
-  text-align: center;
-  line-height: 1.6;
-  max-width: 260px;
-}
-
-.footer {
-  text-align: center;
-  color: #5c5361;
-  font-size: 12px;
-  letter-spacing: 1px;
-  margin-top: 45px;
-}
-
-@media(max-width: 800px) {
-  .studio { grid-template-columns: 1fr; }
-  main { padding-top: 35px; }
-  .topbar { padding: 0 20px; }
-}
-
-@media(max-width: 480px) {
-  .panel { padding: 22px; }
-  .style-grid { grid-template-columns: repeat(2, 1fr); }
-}
+button:disabled { opacity: .4; cursor: not-allowed; }
+.record { background: #ef4444; }
+#status { color: #a78bfa; }
 </style>
 </head>
 
 <body>
+<div class="container">
+  <h1>🎭 AI CHARACTER STUDIO</h1>
+  <p>Choose your character and make a video!</p>
 
-<header class="topbar">
-  <div class="logo">Open<span>Martik</span></div>
-  <div class="status-pill"><span class="status-dot"></span>STUDIO PRO ONLINE</div>
-</header>
+  <h3>Choose your character</h3>
+  <select id="character">
+    <option value="🤖">Robot</option>
+    <option value="👽">Alien</option>
+    <option value="🦸">Superhero</option>
+    <option value="🐼">Panda</option>
+    <option value="🧛">Vampire</option>
+    <option value="🦖">Dinosaur</option>
+    <option value="🤡">Funny Clown</option>
+    <option value="👑">King</option>
+  </select>
 
-<main>
-  <section class="hero">
-    <div class="eyebrow">Next-Gen Video Generation</div>
-    <h1>Create something<br><span>unforgettable.</span></h1>
-    <p class="subtitle">
-      Turn your vision and creative prompts into cinema-grade videos powered by advanced AI.
-    </p>
-  </section>
+  <br>
+  <button id="start">📷 START CAMERA</button>
 
-  <section class="studio">
+  <video id="video" autoplay playsinline muted></video>
+  <canvas id="screen" width="640" height="480"></canvas>
 
-    <div class="panel">
-      <div class="panel-title">Video Parameters</div>
-      <div class="panel-desc">Configure your AI video generation below.</div>
+  <br>
+  <button class="record" id="record" disabled>
+    🔴 RECORD
+  </button>
+  <button id="stop" disabled>⏹ STOP</button>
+  <p id="status">Waiting for camera...</p>
+  <a id="download" hidden download="my-video.webm">
+    <button>⬇️ DOWNLOAD VIDEO</button>
+  </a>
+</div>
 
-      <form id="videoForm">
+<script type="module">
+import {
+  FaceLandmarker,
+  FilesetResolver
+} from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14";
 
-        <div class="field">
-          <label>GENERATION MODE</label>
-          <div class="mode-grid">
-            <button type="button" class="mode-option active" id="textMode">
-              <span class="emoji">✍️</span>
-              <strong>Text to Video</strong>
-              <small>Turn prompts into motion</small>
-            </button>
-            <button type="button" class="mode-option" id="imageMode">
-              <span class="emoji">🖼️</span>
-              <strong>Image to Video</strong>
-              <small>Animate your image</small>
-            </button>
-          </div>
-          <input type="hidden" id="mode" value="text">
-        </div>
+const video = document.getElementById("video");
+const canvas = document.getElementById("screen");
+const ctx = canvas.getContext("2d");
+const character = document.getElementById("character");
+const status = document.getElementById("status");
 
-        <div class="field">
-          <label for="prompt">YOUR PROMPT</label>
-          <textarea id="prompt" placeholder="Describe the scene you want to generate... e.g. A futuristic city at sunset, flying cars and glowing lights."></textarea>
-        </div>
+let faceLandmarker;
+let camera;
+let recorder;
+let chunks = [];
+let running = false;
+let recording = false;
+let lastFace = null;
+let animation = 0;
 
-        <!-- Visual Style με εικόνες (Cartoun + 3 επιλογές + 1 your idea) -->
-        <div class="field">
-          <label>VISUAL STYLE</label>
-          <div class="style-grid">
-            <div class="style-card active" data-style="cartoon">
-              <img src="https://images.unsplash.com/photo-1578632767115-351597cf2477?w=150&auto=format&fit=crop&q=80" alt="Cartoon">
-              <span>Cartoon</span>
-            </div>
-            <div class="style-card" data-style="photorealistic">
-              <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150&auto=format&fit=crop&q=80" alt="Photorealistic">
-              <span>Photorealistic</span>
-            </div>
-            <div class="style-card" data-style="cyberpunk">
-              <img src="https://images.unsplash.com/photo-1515260268569-9271009adfdb?w=150&auto=format&fit=crop&q=80" alt="Cyberpunk">
-              <span>Cyberpunk</span>
-            </div>
-            <div class="style-card" data-style="cinematic">
-              <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=150&auto=format&fit=crop&q=80" alt="Cinematic">
-              <span>Cinematic</span>
-            </div>
-            <div class="style-card" data-style="your-idea">
-              <img src="https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?w=150&auto=format&fit=crop&q=80" alt="Your Idea">
-              <span>Your Idea</span>
-            </div>
-          </div>
-          <input type="hidden" id="selectedStyle" value="cartoon">
-        </div>
+async function setupAI() {
+  const vision = await FilesetResolver.forVisionTasks(
+    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm"
+  );
 
-        <div class="field" id="imageField" style="display:none">
-          <label for="image">UPLOAD SOURCE IMAGE</label>
-          <div class="upload-box">
-            <input type="file" id="image" accept="image/*">
-          </div>
-        </div>
-
-        <!-- Duration Seconds Selection (5, 10, 15, Custom) -->
-        <div class="field">
-          <label>DURATION (SECONDS)</label>
-          <div class="seconds-grid">
-            <button type="button" class="sec-option active" data-sec="5">5s</button>
-            <button type="button" class="sec-option" data-sec="10">10s</button>
-            <button type="button" class="sec-option" data-sec="15">15s</button>
-            <button type="button" class="sec-option" data-sec="custom">Custom</button>
-          </div>
-          <input type="hidden" id="duration" value="5">
-        </div>
-
-        <button class="generate-btn" id="generateBtn" type="submit">
-          ✦ Generate Video
-        </button>
-      </form>
-    </div>
-
-    <div class="panel">
-      <div class="panel-title">Studio Canvas</div>
-      <div class="panel-desc">Your generated output will appear here.</div>
-
-      <div class="preview" id="preview">
-        <div class="preview-icon">✦</div>
-        <h3>Ready to create</h3>
-        <p>Enter your prompt and configuration settings to generate your next video.</p>
-      </div>
-    </div>
-
-  </section>
-
-  <div class="footer">
-    OPENMARTIK AI STUDIO · PREVIEW EDITION
-  </div>
-</main>
-
-<script>
-const modeInput = document.getElementById("mode");
-const imageField = document.getElementById("imageField");
-const textMode = document.getElementById("textMode");
-const imageMode = document.getElementById("imageMode");
-const videoForm = document.getElementById("videoForm");
-
-function setMode(mode) {
-  modeInput.value = mode;
-  textMode.classList.toggle("active", mode === "text");
-  imageMode.classList.toggle("active", mode === "image");
-  imageField.style.display = mode === "image" ? "block" : "none";
+  faceLandmarker = await FaceLandmarker.createFromOptions(
+    vision,
+    {
+      baseOptions: {
+        modelAssetPath:
+          "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
+        delegate: "GPU"
+      },
+      runningMode: "VIDEO",
+      numFaces: 1
+    }
+  );
 }
 
-textMode.addEventListener("click", () => setMode("text"));
-imageMode.addEventListener("click", () => setMode("image"));
+document.getElementById("start").onclick = async () => {
+  try {
+    status.textContent = "Loading camera and AI...";
+    camera = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: "user" },
+      audio: true
+    });
 
-// Style Cards selection handler
-const styleCards = document.querySelectorAll(".style-card");
-const selectedStyleInput = document.getElementById("selectedStyle");
+    video.srcObject = camera;
+    await video.play();
 
-styleCards.forEach(card => {
-  card.addEventListener("click", () => {
-    styleCards.forEach(c => c.classList.remove("active"));
-    card.classList.add("active");
-    selectedStyleInput.value = card.getAttribute("data-style");
-  });
-});
+    if (!faceLandmarker) await setupAI();
 
-// Duration Seconds selection handler
-const secOptions = document.querySelectorAll(".sec-option");
-const durationInput = document.getElementById("duration");
+    running = true;
+    document.getElementById("record").disabled = false;
+    status.textContent = "Camera ready! Choose a character.";
+    draw();
+  } catch (error) {
+    status.textContent = "Camera error: " + error.message;
+  }
+};
 
-secOptions.forEach(btn => {
-  btn.addEventListener("click", () => {
-    secOptions.forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    durationInput.value = btn.getAttribute("data-sec");
-  });
-});
+function draw() {
+  if (!running) return;
 
-// Prevent default submit action
-videoForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-});
+  ctx.save();
+  ctx.clearRect(0, 0, 640, 480);
+  ctx.translate(640, 0);
+  ctx.scale(-1, 1);
+  ctx.drawImage(video, 0, 0, 640, 480);
+  ctx.restore();
+
+  try {
+    const result = faceLandmarker.detectForVideo(
+      video, performance.now()
+    );
+
+    if (result.faceLandmarks.length) {
+      const face = result.faceLandmarks[0];
+      const xs = face.map(p => p.x);
+      const ys = face.map(p => p.y);
+
+      lastFace = {
+        x: 640 * (1 - (Math.min(...xs) + Math.max(...xs)) / 2),
+        y: 480 * (Math.min(...ys) + Math.max(...ys)) / 2
+      };
+    }
+  } catch (e) {}
+
+  if (lastFace) {
+    const t = performance.now() / 300;
+    const x = Math.max(45, Math.min(595, lastFace.x + 90));
+    const y = Math.max(65, Math.min(415,
+      lastFace.y + Math.sin(t) * 12));
+
+    ctx.font = "85px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText(character.value, x, y);
+
+    ctx.font = "18px Arial";
+    ctx.fillStyle = "white";
+    ctx.fillText("YOUR CHARACTER", x, y + 30);
+  }
+
+  animation = requestAnimationFrame(draw);
+}
+
+document.getElementById("record").onclick = () => {
+  chunks = [];
+
+  const stream = canvas.captureStream(30);
+  camera.getAudioTracks().forEach(track =>
+    stream.addTrack(track)
+  );
+
+  recorder = new MediaRecorder(stream);
+  recorder.ondataavailable = e => {
+    if (e.data.size) chunks.push(e.data);
+  };
+
+  recorder.onstop = () => {
+    const blob = new Blob(chunks, {type: "video/webm"});
+    const url = URL.createObjectURL(blob);
+    const download = document.getElementById("download");
+    download.href = url;
+    download.hidden = false;
+    status.textContent = "Video ready! Download it!";
+  };
+
+  recorder.start();
+  recording = true;
+  document.getElementById("record").disabled = true;
+  document.getElementById("stop").disabled = false;
+  status.textContent = "🔴 Recording...";
+};
+
+document.getElementById("stop").onclick = () => {
+  if (recorder && recording) {
+    recorder.stop();
+    recording = false;
+    document.getElementById("record").disabled = false;
+    document.getElementById("stop").disabled = true;
+  }
+};
 </script>
-
 </body>
 </html>
